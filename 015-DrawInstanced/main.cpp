@@ -546,7 +546,7 @@ private:
 		{10, 10, 10, 10, 11, 9},	// 7.活塞 (三个面)
 		{12, 12, 12, 12, 12, 12},	// 8.红石块
 		{13, 13, 13, 13, 13, 13},	// 9.激活状态的红石灯
-		{15, 15, 15, 15, 14, 16},	// 10.TNT (三个面)
+		{15, 15, 15, 15, 16, 14},	// 10.TNT (三个面)
 		{17, 17, 17, 17, 17, 17},	// 11.基岩
 		{18, 18, 18, 18, 33, 33},	// 12.书架 (两个面)
 		{19, 19, 19, 19, 19, 19},	// 13.命令方块
@@ -1233,7 +1233,7 @@ public:
 		// 当 GPU 端的 CommandQueue 的任务执行完成，自身会修改与其相关联所有围栏对象内部的 CompletedValue 任务值
 		// 然后激发相关联的围栏对象，绑定到 CommandQueue 的多个围栏对象 (一个 CommandQueue 可以绑多个围栏，一个围栏可以绑多个围栏值)
 		// 在接收到信号后，围栏会查看自身的 CompletedValue 和对象内部所有的 Event Slot 事件槽
-		// 如果与某个事件槽的 Event Slot 的 FenceValue 对上了 (FenceValue == CompletedVaule)，就会将对应事件设置成有信号状态
+		// 如果与某个事件槽的 Event Slot 的 FenceValue 对上了 (FenceValue == CompletedValue)，就会将对应事件设置成有信号状态
 		// 然后 GPU Command Queue 继续执行剩下未完成的任务，以此类推。这就是 DX12 CPU 与 GPU 之间的同步与异步
 		m_Fence->SetEventOnCompletion(FenceValue, RenderEvent);
 
@@ -1537,7 +1537,7 @@ public:
 		// Draw Call 会带来 CPU 和 GPU 的双重开销，包括 CPU 端的固定成本和 GPU 端的流水线停顿
 		// 为了提高渲染效率，于是就诞生了 Instance 实例化技术
 
-		// 早期的实例化技术叫 Batch Draw 批绘制，它是一种 Software Instancing 软件实例化技术
+		// 早期的优化技术叫 Batch Draw 批绘制，它是一种 Software Approximate Instancing 软件伪实例化技术
 		// 它的原理是将多个实例的数据，全部复制到大的顶点和索引缓冲区中，让它们合并成一个包含多实例的"超大网格"
 		// Draw Call 只需要绘制这个超大网格就行。实现简单，但 CPU 开销极大，内存占用高，GPU 性能损失严重 (没用上 GPU 并行计算的特性)，拓展性很差
 
@@ -1559,7 +1559,7 @@ public:
 		
 		// 注意！同一个输入槽下的 InputSlotClass 和 InstanceDataStepRate 必须相同！！
 		// 否则调试层报错：All elements from a given input slot must have the same InputSlotClass and InstanceDataStepRate.
-		// 所以 顶点流 和 实例流 分成两个独立的输入槽，要用两个不同的 VertexBufferView，不仅是我的想法，而且是 DX12 API 强制要求我们这样分
+		// 所以 顶点流 和 实例流 分成两个独立的输入槽，要用两个不同的 VertexBufferView，不仅是我的想法，而且是 DX12 API 强制要求我们这样分门别类
 
 
 		// 方块实例相对世界空间的偏移 float3 BlockOffset
